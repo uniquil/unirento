@@ -14,7 +14,6 @@
  * limitations under the License.
  *
  */
-
 package org.kurento.tutorial.player;
 
 import org.kurento.client.KurentoClient;
@@ -35,22 +34,26 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @SpringBootApplication
 public class PlayerApp implements WebSocketConfigurer {
 
-  @Bean
-  public PlayerHandler handler() {
-    return new PlayerHandler();
-  }
+    final static String DEFAULT_KMS_WS_URI = "ws://192.168.0.62:8888/kurento";
 
-  @Bean
-  public KurentoClient kurentoClient() {
-    return KurentoClient.create();
-  }
+    @Bean
+    public PlayerHandler handler() {
+        return new PlayerHandler();
+    }
 
-  @Override
-  public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(handler(), "/player");
-  }
+    @Bean
+    public KurentoClient kurentoClient() {
+       // return KurentoClient.create();
+       return KurentoClient.create(System.getProperty("kms.url",
+            DEFAULT_KMS_WS_URI));
+    }
 
-  public static void main(String[] args) throws Exception {
-    new SpringApplication(PlayerApp.class).run(args);
-  }
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(handler(), "/player");
+    }
+
+    public static void main(String[] args) throws Exception {
+        new SpringApplication(PlayerApp.class).run(args);
+    }
 }
